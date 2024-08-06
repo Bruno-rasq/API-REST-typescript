@@ -1,9 +1,10 @@
 import { Router, Request, Response } from "express";
 import { User } from "../schemas"
+import FAKEDB from "../database"
+
 
 const router = Router()
 
-let FAKEDB: User[] = []
 
 router.get("/",  (request: Request, response: Response) => {
 	return response.status(200).json({ "users": FAKEDB })
