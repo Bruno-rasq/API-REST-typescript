@@ -1,9 +1,7 @@
 import { Request, Response } from "express"
 import { DataSource } from "typeorm"
 
-
 import { User } from "../entities/users"
-
 
 export const get_all_users = async (request: Request, response: Response) => {
 	const datasource = request.app.locals.dataSource as DataSource

@@ -1,11 +1,21 @@
 import request from "supertest";
 import app from "../src/app";
 
-describe("GET /", () => {
-	test("should return status code 200 and message 'ok' ", async () => {
-		const response = await request(app).get("/");
+import { ProdutionDataSource } from "../src/app-data-source";
 
-		expect(response.status).toBe(200);
-		expect(response.body).toEqual({ "message": "ok" });
-	});
-});
+describe("GET /", () => {
+	beforeAll(async () => {
+		if(!ProdutionDataSource.isInitialized){
+			await ProdutionDataSource.initialize()
+		}
+	})
+
+	afterAll(async () => {
+		await ProdutionDataSource.destroy()
+	})
+
+	test('should return a message "ok" ', async () => {
+		const response = await request(app).get("/")
+		expect(response.body).toEqual({ "message": "ok" })
+	})
+})
