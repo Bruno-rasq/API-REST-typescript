@@ -1,5 +1,7 @@
-import express, { Request, Response, Application } from "express";
-import { router as UserRouters } from "./routers/users.routes"
+import express, { Application } from "express";
+
+import { router as UserRouters } from "./routers/users.routes";
+import { router as appRouters } from "./routers/app.routes";
 
 const app: Application = express()
 
@@ -7,11 +9,9 @@ const app: Application = express()
 app.use(express.json())
 
 // adicionando as rotas
+app.use("/", appRouters)
 app.use("/users", UserRouters)
 
-// endpoit raiz
-app.get("/", (request: Request, response: Response) => {
-	return response.status(200).json({ "message": "ok"})
-})
-
 export default app;
+
+//https://2762c49a-d183-427b-9c82-6a6f643b372a-00-xygj8i6kk4j5.spock.replit.dev/

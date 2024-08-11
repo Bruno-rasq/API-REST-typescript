@@ -1,79 +1,20 @@
-import { Router, Request, Response } from "express";
-import { User } from "../schemas"
-import FAKEDB from "../database"
+import { Router } from "express";
+import * as controllers from "../controllers/users.controllers"
+
+import { setDataSource } from "../middlewares/setdatasource"
+import { ProdutionDataSource, TestDataSource } from "../app-data-source"
 
 
 const router = Router()
 
 
-router.get("/",  (request: Request, response: Response) => {
-	return response.status(200).json({ "users": FAKEDB })
-})
+router.get("/", setDataSource(ProdutionDataSource), controllers.get_all_users)
+router.post("/", setDataSource(ProdutionDataSource), controllers.create_user)
+router.get("/:id", setDataSource(ProdutionDataSource), controllers.get_user_by_id)
+router.put("/:id", setDataSource(ProdutionDataSource), controllers.update_user)
+router.delete("/:id", setDataSource(ProdutionDataSource), controllers.delete_user)
 
-router.get("/:id", (request: Request, response: Response) => {
-	const user = FAKEDB.find((user) => user.id === parseInt(request.params.id))
-
-	if(!user){
-		return response.status(404).json({"message": "user not found"})
-	}
-	return response.status(200).json(user)
-})
-
-router.post("/", (request: Request, response: Response) => {
-	const { name, email } = request.body
-
-	if( !name || !email ){
-		// status code 400 bad request
-		return response.status(400).json({"message": "bad request"})
-	}
-
-	if( typeof name !== "string" || typeof email != "string"){
-		// status code 400 bad request
-		return response.status(400).json({"message": "name or email must be string"})
-	}
-
-	const newUser = new User(
-		FAKEDB.length + 1, 
-		name, 
-		email
-	)
-
-	FAKEDB.push(newUser)
-
-	// status code 201 created
-	return response.status(201).json(newUser)
-})
-
-router.delete("/:id", (request: Request, response: Response) => {
-	const index = FAKEDB.findIndex((user) => user.id === parseInt(request.params.id))
-
-	if(index === -1){
-		return response.status(404).json({"message": "user not found"})
-	}
-	FAKEDB.splice(index, 1)
-	return response.status(204).send()
-})
-
-router.put("/:id", (request: Request, response: Response) => {
-	const userID = parseInt(request.params.id)
-	const { name, email } = request.body
-
-	if(!name || typeof name !== "string" || !email || typeof email !== "string"){
-		return response.status(400).json({"message": "email and name must be provided as string"})
-	}
-
-	const userIndex = FAKEDB.findIndex((user) => user.id === userID)
-
-	if(userIndex === -1){
-		return response.status(404).json({"message": "user not found"})
-	}
-
-	const userUpdated = new User(userID, name, email)
-
-	FAKEDB[userIndex] = userUpdated
-
-	return response.status(200).json({"message": "user updated"})
-})
-
+//isso claramente é uma gambiarra pesada. perdâo se ofendi vcs
+router.get("/test", setDataSource(TestDataSource), controllers.get_all_users)
 
 export { router };
