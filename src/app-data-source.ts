@@ -10,8 +10,8 @@ export const ProdutionDataSource = new DataSource({
 
 export const TestDataSource = new DataSource({
 	type: "sqlite",
-	// database: ":memory:",
-	database: "./src/database/testDB.sqlite",
+	database: ":memory:",
+	//database: "./src/database/testDB.sqlite",
 	entities: ["src/entities/*.ts"],
 	logging: false,
 	synchronize: true,
