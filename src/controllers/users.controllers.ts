@@ -24,7 +24,6 @@ export const create_user = async (request: Request, response: Response) => {
 	}
 
 	if( !name || !email ){
-
 		return response.status(400).json({"message": "bad request"})
 	}
 
@@ -33,9 +32,9 @@ export const create_user = async (request: Request, response: Response) => {
 	}
 
 	const user = await datasource.getRepository(User).create({name, email})
-	const results = await datasource.getRepository(User).save(user)
+	const result = await datasource.getRepository(User).save(user)
 
-	return response.status(201).json(results)
+	return response.status(201).json(result)
 }
 
 export const get_user_by_id = async (request: Request, response: Response) => {
@@ -67,6 +66,10 @@ export const update_user = async (request: Request, response: Response) => {
     if (!name || !email) {
         return response.status(400).json({ "message": "Name and email are required" });
     }
+
+	if( typeof name !== "string" || typeof email != "string"){
+		return response.status(400).json({"message": "name or email must be string"})
+	}
 
     try {
         const userRepository = datasource.getRepository(User);
