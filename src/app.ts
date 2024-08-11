@@ -13,5 +13,3 @@ app.use("/", appRouters)
 app.use("/users", UserRouters)
 
 export default app;
-
-//https://2762c49a-d183-427b-9c82-6a6f643b372a-00-xygj8i6kk4j5.spock.replit.dev/

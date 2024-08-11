@@ -2,13 +2,13 @@
   "name": "API REST written with typescript and express",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/server.ts",
   "scripts": {
     "dev": "tsx ./src/server.ts",
-    "test": "NODE_ENV=test jest --verbose --coverage"
+    "test": "jest --verbose --coverage"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["express", "typescript", "typeorm", "sqlite3", "jest"],
+  "author": "Bruno dias Rasquinha",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^18.0.6",

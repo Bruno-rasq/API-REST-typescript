@@ -1,13 +1,12 @@
 import app from "./app"
-import { ProdutionDataSource, TestDataSource } from "./app-data-source"
+import { ProdutionDataSource } from "./app-data-source"
 
-const isTestEnv = process.env.NODE_ENV ===  'test'
-let dataSource = isTestEnv ? TestDataSource : ProdutionDataSource
-
-
+/**
+ * @description Função que inicia a api e o data source.
+ */
 const startServer = async () => {
 	try {
-		await dataSource.initialize()
+		await ProdutionDataSource.initialize()
 
 		const port = process.env.PORT || 3000;
 		app.listen(port, () => console.log(`Server running on port: ${port}`))
