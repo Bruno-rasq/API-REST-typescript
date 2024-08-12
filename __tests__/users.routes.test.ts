@@ -28,10 +28,6 @@ describe("GET /users/", () => {
 			expect(response.body).toEqual({"users": []})
 		});
 	})
-
-	describe("fail cases: ", () => {
-		test.todo("should return status 500 if the data source is not initialized")
-	})
 })
 
 describe("POST /users/", () => {
@@ -83,8 +79,6 @@ describe("POST /users/", () => {
 			expect(response.status).toBe(400)
 			expect(response.body).toEqual({"message": "name or email must be string"})
 		})
-
-		test.todo("should return status 500 if the data source is not initialized")
 	})
 })
 
@@ -179,7 +173,6 @@ describe("DELETE /users/:ID", () => {
 		})
 
 		test.todo("should return status 500 if there is an error when deleting the user")
-		test.todo("should return status 500 if the data source is not initialized")
 	})
 })
 
@@ -239,6 +232,5 @@ describe("PUT /users/:ID", () => {
 		})
 		
 		test.todo("should return status 500 if there is an error when updating the user")
-		test.todo("should return status 500 if the data source is not initialized")
 	})
 });
