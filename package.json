@@ -5,9 +5,9 @@
   "main": "./src/server.ts",
   "scripts": {
     "dev": "tsx ./src/server.ts",
-    "test": "jest --verbose --coverage"
+    "test": "NODE_ENV=test jest --verbose --coverage"
   },
-  "keywords": ["express", "typescript", "typeorm", "sqlite3", "jest"],
+  "keywords": ["express", "typescript", "typeorm", "sqlite3", "jest", "testing", "api rest"],
   "author": "Bruno dias Rasquinha",
   "license": "ISC",
   "dependencies": {

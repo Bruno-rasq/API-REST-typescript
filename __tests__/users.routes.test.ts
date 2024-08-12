@@ -3,12 +3,7 @@ import app from "../src/app";
 
 import { TestDataSource } from "../src/app-data-source";
 
-/*
-	OBSERVAÇÂO:
-		-- todos os test vem do endpoint /test, isso se deve
-		por eu ainda não ter implementado uma forma de alterar 
-		o data source durante os testes.
-*/
+
 describe("GET /users/", () => {
 	
 	beforeAll(async () => {
@@ -23,19 +18,13 @@ describe("GET /users/", () => {
 
 	describe("success cases: ", () => {
 
-		/*
-			ATENÇÃO:
-
-				-- estranhamente os testes passam apenas quando as rotas
-				normais "/users/" não estão ativadas.
-		*/
-		test.skip("should return status code HTTP_200_OK", async () => {
-			const response = await request(app).get("/users/test");
+		test("should return status code HTTP_200_OK", async () => {
+			const response = await request(app).get("/users/");
 			expect(response.status).toBe(200);
 		})
 
-		test.skip("should return a empty list of users", async () => {
-			const response = await request(app).get("/users/test");
+		test("should return a empty list of users", async () => {
+			const response = await request(app).get("/users/");
 			expect(response.body).toEqual({"users": []})
 		});
 	})
@@ -71,7 +60,7 @@ describe("POST /users/", () => {
 		}
 		
 		test("should create a new user with valid input", async () => {
-			const response = await request(app).post("/users/test").send(validInput)
+			const response = await request(app).post("/users/").send(validInput)
 
 			expect(response.status).toBe(201)
 			expect(response.body).toEqual(validIO)
@@ -84,13 +73,13 @@ describe("POST /users/", () => {
 		const inputWithoutEmail = { "name": "test name"}
 
 		test("should return status 400 for request without email", async () => {
-			const response = await request(app).post("/users/test").send(inputWithoutEmail)
+			const response = await request(app).post("/users/").send(inputWithoutEmail)
 			expect(response.status).toBe(400)
 			expect(response.body).toEqual({"message": "bad request"})
 		})
 
 		test("should return status 400 for bad request", async () => {
-			const response = await request(app).post("/users/test").send(invalidInput)
+			const response = await request(app).post("/users/").send(invalidInput)
 			expect(response.status).toBe(400)
 			expect(response.body).toEqual({"message": "name or email must be string"})
 		})
@@ -112,21 +101,21 @@ describe("GET /users/:ID", () => {
 	});
 
 	beforeEach(async () => {
-		await request(app).post("/users/test").send({
+		await request(app).post("/users/").send({
 			"name": "test name",
 			"email": "test@email.com"
 		})
 	})
 
 	afterEach(async () => {
-		await request(app).delete("/users/test/1")
+		await request(app).delete("/users/1")
 	})
 
 	describe("success cases: ", () => {
 		
 		test("should return status 200 if the user is found.", async () => {
 			const ID = 1
-			const response = await request(app).get(`/users/test/${ID}`)
+			const response = await request(app).get(`/users/${ID}`)
 
 			expect(response.status).toBe(200)
 			expect(response.body).toEqual(
@@ -143,7 +132,7 @@ describe("GET /users/:ID", () => {
 		
 		test("should return status 404 if the user is not found.", async () => {
 			const userId = 3 // id inesistente
-			const response = await request(app).get(`/users/test/${userId}`)
+			const response = await request(app).get(`/users/${userId}`)
 
 			expect(response.status).toBe(404)
 			expect(response.body).toEqual({"message": "user not found!"})
@@ -164,7 +153,7 @@ describe("DELETE /users/:ID", () => {
 	});
 
 	beforeEach(async () => {
-		await request(app).post("/users/test").send({
+		await request(app).post("/users/").send({
 			"name": "test name",
 			"email": "test@email.com"
 		})
@@ -173,7 +162,7 @@ describe("DELETE /users/:ID", () => {
 	describe("success cases: ", () => {
 
 		test("should return status 200 if the user deleted successlyful", async () => {
-			const response = await request(app).delete("/users/test/1")
+			const response = await request(app).delete("/users/1")
 
 			expect(response.status).toBe(200)
 			expect(response.body).toEqual({ "message": "User deleted successfully" })
@@ -183,7 +172,7 @@ describe("DELETE /users/:ID", () => {
 	describe("fail cases: ", () => {
 
 		test("should return status 404 if the user is not found", async () => {
-			const response = await request(app).delete("/users/test/3")
+			const response = await request(app).delete("/users/3")
 
 			expect(response.status).toBe(404)
 			expect(response.body).toEqual({ "message": "User not found" })
@@ -207,7 +196,7 @@ describe("PUT /users/:ID", () => {
 	});
 
 	beforeEach(async () => {
-		await request(app).post("/users/test").send({
+		await request(app).post("/users/").send({
 			"name": "test name",
 			"email": "test@email.com"
 		})
@@ -219,7 +208,7 @@ describe("PUT /users/:ID", () => {
 		const output = {"name": "new name", "email": "newemail@email.com", "id": 1}
 
 		test("should return status 200 and user updated", async () => {
-			const response = await request(app).put("/users/test/1").send(input)
+			const response = await request(app).put("/users/1").send(input)
 			expect(response.status).toBe(200)
 			expect(response.body).toEqual({ "message": "User updated successfully", "user": output })
 		})
@@ -232,19 +221,19 @@ describe("PUT /users/:ID", () => {
 		const validInput = { "name": "12", "email": "12" }
 
 		test("should return status 400 for invalid input", async () => {
-			const response = await request(app).put("/users/test/1").send(invalidInput)
+			const response = await request(app).put("/users/1").send(invalidInput)
 			expect(response.status).toBe(400)
 			expect(response.body).toEqual({ "message": "Name and email are required" })
 		})
 
 		test("should return status 400 for invalid types in input", async () => {
-			const response = await request(app).put("/users/test/1").send(invalidTypesInput)
+			const response = await request(app).put("/users/1").send(invalidTypesInput)
 			expect(response.status).toBe(400)
 			expect(response.body).toEqual({"message": "name or email must be string"})
 		})
 
 		test("should return status 404 if the user is not found", async () => {
-			const response = await request(app).put("/users/test/23").send(validInput)
+			const response = await request(app).put("/users/23").send(validInput)
 			expect(response.status).toBe(404)
 			expect(response.body).toEqual({ "message": "User not found" })
 		})

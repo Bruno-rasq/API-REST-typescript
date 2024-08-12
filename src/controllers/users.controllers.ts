@@ -1,10 +1,14 @@
 import { Request, Response } from "express"
-import { DataSource } from "typeorm"
 
 import { User } from "../entities/users"
+import { TestDataSource, ProdutionDataSource } from '../app-data-source'
+
+const isTest = process.env.NODE_ENV === 'test'
+const data_source = isTest ? TestDataSource : ProdutionDataSource
+
 
 export const get_all_users = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.dataSource as DataSource
+	const datasource = data_source
 
 	if (!datasource.isInitialized){
 		return response.status(500).json({"message": "data source not initialized"})	
@@ -16,7 +20,7 @@ export const get_all_users = async (request: Request, response: Response) => {
 }
 
 export const create_user = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.dataSource as DataSource
+	const datasource = data_source
 	const { name, email } = request.body
 
 	if (!datasource.isInitialized){
@@ -38,7 +42,7 @@ export const create_user = async (request: Request, response: Response) => {
 }
 
 export const get_user_by_id = async (request: Request, response: Response) => {
-	const datasource =  request.app.locals.dataSource as DataSource
+	const datasource = data_source
 	const userID = parseInt(request.params.id)
 
 	const user = await datasource.createQueryBuilder()
@@ -54,7 +58,7 @@ export const get_user_by_id = async (request: Request, response: Response) => {
 }
 
 export const update_user = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.dataSource as DataSource;
+	const datasource = data_source
 
     if (!datasource.isInitialized) {
         return response.status(500).json({ "message": "data source not initialized" });
@@ -91,7 +95,7 @@ export const update_user = async (request: Request, response: Response) => {
 }
 
 export const delete_user = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.dataSource as DataSource;
+	const datasource = data_source
 
     if (!datasource.isInitialized) {
         return response.status(500).json({ "message": "data source not initialized" });
