@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm'
 import { User } from "../entities/users"
 
 
-export const get_all_users = async (request: Request, response: Response) => {
+const get_all_users = async (request: Request, response: Response) => {
 	const datasource = request.app.locals.datasource as DataSource
 
 	const users = await datasource.getRepository(User).find()
@@ -12,7 +12,7 @@ export const get_all_users = async (request: Request, response: Response) => {
 	return response.status(200).json({ "users": users })
 }
 
-export const create_user = async (request: Request, response: Response) => {
+const create_user = async (request: Request, response: Response) => {
 	const datasource = request.app.locals.datasource as DataSource
 	const { name, email } = request.body
 
@@ -30,7 +30,7 @@ export const create_user = async (request: Request, response: Response) => {
 	return response.status(201).json(result)
 }
 
-export const get_user_by_id = async (request: Request, response: Response) => {
+const get_user_by_id = async (request: Request, response: Response) => {
 	const datasource = request.app.locals.datasource as DataSource
 	const userID = parseInt(request.params.id)
 
@@ -46,7 +46,7 @@ export const get_user_by_id = async (request: Request, response: Response) => {
 	return response.status(200).json(user)
 }
 
-export const update_user = async (request: Request, response: Response) => {
+const update_user = async (request: Request, response: Response) => {
 	const datasource = request.app.locals.datasource as DataSource
 
     const userId = request.params.id;
@@ -79,7 +79,7 @@ export const update_user = async (request: Request, response: Response) => {
 	}
 }
 
-export const delete_user = async (request: Request, response: Response) => {
+const delete_user = async (request: Request, response: Response) => {
 	const datasource = request.app.locals.datasource as DataSource
 
     const userId = request.params.id;
@@ -98,4 +98,13 @@ export const delete_user = async (request: Request, response: Response) => {
     } catch (error) {
         return response.status(500).json({ "message": "Error deleting user", "error": error });
 	}
+}
+
+
+export const Controllers = {
+	get_all_users,
+	create_user,
+	get_user_by_id,
+	update_user,
+	delete_user
 }
