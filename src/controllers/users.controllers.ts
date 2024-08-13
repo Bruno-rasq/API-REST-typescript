@@ -1,110 +1,108 @@
 import { Request, Response } from "express"
 import { DataSource } from 'typeorm'
+import { z } from "zod"
 
 import { User } from "../entities/users"
+import { userSchemaInput } from "../schemas/user.schemas"
 
+export const userControllers = {
+	
+	post: async (request: Request, response: Response) => {
+		const datasource = request.app.locals.datasource as DataSource
 
-const get_all_users = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.datasource as DataSource
+		try {
+			const { name, email } = userSchemaInput.parse(request.body)
+			const user = await datasource.getRepository(User).create({name, email})
+			const result = await datasource.getRepository(User).save(user)
 
-	const users = await datasource.getRepository(User).find()
+			return response.status(201).json(result)
+			
+		} 
+		catch (err) {
+			if (err instanceof z.ZodError) {
+				const validationError = err.errors.map(err => ({
+					path: err.path.join('.'),
+					message: err.message
+				}));
 
-	return response.status(200).json({ "users": users })
-}
+				return response.status(400).json({message: validationError})
+			}
+		}
+		return response.status(500).json({ message: "Internal server error!"})
+	},
 
-const create_user = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.datasource as DataSource
-	const { name, email } = request.body
+	get: async (request: Request, response: Response) => {
+		const datasource = request.app.locals.datasource as DataSource
+		const users = await datasource.getRepository(User).find()
+		return response.status(200).json({ "users": users })
+	},
 
-	if( !name || !email ){
-		return response.status(400).json({"message": "bad request"})
-	}
+	getWithID: async (request: Request, response: Response) => {
+		const datasource = request.app.locals.datasource as DataSource
+		const userID = parseInt(request.params.id)
 
-	if( typeof name !== "string" || typeof email != "string"){
-		return response.status(400).json({"message": "name or email must be string"})
-	}
+		const user = await datasource.createQueryBuilder()
+			.select("user")
+			.from(User, "user")
+			.where("user.id = :id", { id: userID })
+			.getOne()
 
-	const user = await datasource.getRepository(User).create({name, email})
-	const result = await datasource.getRepository(User).save(user)
+		if(!user){
+			return response.status(404).json({"message": "user not found!"})
+		}
+		return response.status(200).json(user)
+	},
 
-	return response.status(201).json(result)
-}
+	delete: async (request: Request, response: Response) => {
+		const datasource = request.app.locals.datasource as DataSource
+		const userId = parseInt(request.params.id);
 
-const get_user_by_id = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.datasource as DataSource
-	const userID = parseInt(request.params.id)
+		try {
+			const userRepository = datasource.getRepository(User);
+			const user = await userRepository.findOneBy({ id: userId });
 
-	const user = await datasource.createQueryBuilder()
-								 .select("user")
-								 .from(User, "user")
-								 .where("user.id = :id", { id: userID })
-								 .getOne()
+			if (!user) {
+				return response.status(404).json({ "message": "User not found!" });
+			}
 
-	if(!user){
-		return response.status(404).json({"message": "user not found!"})
-	}
-	return response.status(200).json(user)
-}
+			await userRepository.remove(user);
 
-const update_user = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.datasource as DataSource
+			return response.status(200).json({ "message": "User deleted successfully" });
+		} catch (error) {
+			return response.status(500).json({ "message": "Error deleting user", "error": error });
+		}
+	},
 
-    const userId = request.params.id;
-    const { name, email } = request.body;
+	update: async (request: Request, response: Response) => {
+		const datasource = request.app.locals.datasource as DataSource
+		const userId = parseInt(request.params.id);
 
-    if (!name || !email) {
-        return response.status(400).json({ "message": "Name and email are required" });
-    }
+		try {
+			const { name, email } = userSchemaInput.parse(request.body);
 
-	if( typeof name !== "string" || typeof email != "string"){
-		return response.status(400).json({"message": "name or email must be string"})
-	}
+			const userRepository = datasource.getRepository(User);
+			const user = await userRepository.findOneBy({ id: userId });
 
-    try {
-        const userRepository = datasource.getRepository(User);
-        const user = await userRepository.findOneBy({ id: Number(userId) });
+			if (!user) {
+				return response.status(404).json({ "message": "User not found" });
+			}
 
-        if (!user) {
-            return response.status(404).json({ "message": "User not found" });
-        }
+			user.name = name;
+			user.email = email;
+			await userRepository.save(user);
+			
+			return response.status(200).json({ "message": "User updated successfully", "user": user });
+		}
+		catch (err) {
+			if (err instanceof z.ZodError) {
+				const validationError = err.errors.map(err => ({
+					path: err.path.join('.'),
+					message: err.message
+				}));
 
-        user.name = name;
-        user.email = email;
-
-        await userRepository.save(user);
-
-        return response.status(200).json({ "message": "User updated successfully", "user": user });
-    } catch (error) {
-        return response.status(500).json({ "message": "Error updating user", "error": error });
-	}
-}
-
-const delete_user = async (request: Request, response: Response) => {
-	const datasource = request.app.locals.datasource as DataSource
-
-    const userId = request.params.id;
-
-    try {
-        const userRepository = datasource.getRepository(User);
-        const user = await userRepository.findOneBy({ id: Number(userId) });
-
-        if (!user) {
-            return response.status(404).json({ "message": "User not found" });
-        }
-
-        await userRepository.remove(user);
-
-        return response.status(200).json({ "message": "User deleted successfully" });
-    } catch (error) {
-        return response.status(500).json({ "message": "Error deleting user", "error": error });
-	}
-}
-
-
-export const Controllers = {
-	get_all_users,
-	create_user,
-	get_user_by_id,
-	update_user,
-	delete_user
+				return response.status(400).json({message: validationError})
+			}
+		}
+		return response.status(500).json({ message: "Internal server error!"})
+	},
 }

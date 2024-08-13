@@ -4,17 +4,81 @@ import app from "../src/app";
 import { TestDataSource } from "../src/app-data-source";
 
 
-describe("GET /users/", () => {
-	
-	beforeAll(async () => {
-		if (!TestDataSource.isInitialized) {
-			await TestDataSource.initialize();
-		}
-	});
 
-	afterAll(async () => {
-		await TestDataSource.destroy();
-	});
+beforeEach(async () => {
+	if (!TestDataSource.isInitialized) {
+		await TestDataSource.initialize();
+	}
+});
+
+afterEach(async () => {
+	await TestDataSource.destroy();
+});
+
+
+
+describe("POST /users/", () => {
+
+	describe("success cases: ", () => {
+
+		const validInput = {
+			"name": "client",
+			"email": "client@email.com"
+		}
+
+		const validIO = {
+			"name": "client",
+			"email": "client@email.com",
+			"id": 1
+		}
+
+		test("should return a new user if success case", async () => {
+			const response = await request(app).post("/users/").send(validInput)
+			expect(response.body).toEqual(validIO)
+		})
+
+		test("should return status 201 for success case", async () => {
+			const response = await request(app).post("/users/").send(validInput)
+			expect(response.status).toBe(201)
+		})
+	})
+
+	describe("fail cases: ", () => {
+
+		const invalidInput = { "name": 123, "email": 123}
+		const inputWithoutEmail = { "name": "test name"}
+
+		test("should return status 400 for request without email", async () => {
+			const response = await request(app).post("/users/").send(inputWithoutEmail)
+			expect(response.status).toBe(400)
+			expect(response.body).toEqual({"message": [ 
+				{
+					"message": "Required",
+					"path": "email",
+				},
+			]})
+		})
+
+		test("should return status 400 if the input types are different from 'string' ", async () => {
+			const response = await request(app).post("/users/").send(invalidInput)
+			expect(response.status).toBe(400)
+			expect(response.body).toEqual({"message": [
+				{
+					"message": "Expected string, received number",
+					"path": "name",
+				},
+				{
+					"message": "Expected string, received number",
+					"path": "email",
+				},
+			]})
+		})
+		test.todo("should return status 500 for internal server error")
+	})
+})
+
+
+describe("GET /users/", () => {
 
 	describe("success cases: ", () => {
 
@@ -30,69 +94,8 @@ describe("GET /users/", () => {
 	})
 })
 
-describe("POST /users/", () => {
-
-	beforeAll(async () => {
-		if (!TestDataSource.isInitialized) {
-			await TestDataSource.initialize();
-		}
-	});
-
-	afterAll(async () => {
-		await TestDataSource.destroy();
-	});
-
-	describe("success cases: ", () => {
-
-		const validInput = {
-			"name": "client",
-			"email": "client@email.com"
-		}
-
-		const validIO = {
-			"name": "client",
-			"email": "client@email.com",
-			"id": 1
-		}
-		
-		test("should create a new user with valid input", async () => {
-			const response = await request(app).post("/users/").send(validInput)
-
-			expect(response.status).toBe(201)
-			expect(response.body).toEqual(validIO)
-		})
-	})
-
-	describe("fail cases: ", () => {
-		
-		const invalidInput = { "name": 123, "email": 123}
-		const inputWithoutEmail = { "name": "test name"}
-
-		test("should return status 400 for request without email", async () => {
-			const response = await request(app).post("/users/").send(inputWithoutEmail)
-			expect(response.status).toBe(400)
-			expect(response.body).toEqual({"message": "bad request"})
-		})
-
-		test("should return status 400 for bad request", async () => {
-			const response = await request(app).post("/users/").send(invalidInput)
-			expect(response.status).toBe(400)
-			expect(response.body).toEqual({"message": "name or email must be string"})
-		})
-	})
-})
 
 describe("GET /users/:ID", () => {
-
-	beforeAll(async () => {
-		if (!TestDataSource.isInitialized) {
-			await TestDataSource.initialize();
-		}
-	});
-
-	afterAll(async () => {
-		await TestDataSource.destroy();
-	});
 
 	beforeEach(async () => {
 		await request(app).post("/users/").send({
@@ -101,12 +104,8 @@ describe("GET /users/:ID", () => {
 		})
 	})
 
-	afterEach(async () => {
-		await request(app).delete("/users/1")
-	})
-
 	describe("success cases: ", () => {
-		
+
 		test("should return status 200 if the user is found.", async () => {
 			const ID = 1
 			const response = await request(app).get(`/users/${ID}`)
@@ -123,7 +122,7 @@ describe("GET /users/:ID", () => {
 	})
 
 	describe("fail cases: ", () => {
-		
+
 		test("should return status 404 if the user is not found.", async () => {
 			const userId = 3 // id inesistente
 			const response = await request(app).get(`/users/${userId}`)
@@ -134,17 +133,8 @@ describe("GET /users/:ID", () => {
 	})
 })
 
-describe("DELETE /users/:ID", () => {
-	
-	beforeAll(async () => {
-		if (!TestDataSource.isInitialized) {
-			await TestDataSource.initialize();
-		}
-	});
 
-	afterAll(async () => {
-		await TestDataSource.destroy();
-	});
+describe("DELETE /users/:ID", () => {
 
 	beforeEach(async () => {
 		await request(app).post("/users/").send({
@@ -169,24 +159,15 @@ describe("DELETE /users/:ID", () => {
 			const response = await request(app).delete("/users/3")
 
 			expect(response.status).toBe(404)
-			expect(response.body).toEqual({ "message": "User not found" })
+			expect(response.body).toEqual({ "message": "User not found!" })
 		})
 
 		test.todo("should return status 500 if there is an error when deleting the user")
 	})
 })
 
+
 describe("PUT /users/:ID", () => {
-
-	beforeAll(async () => {
-		if (!TestDataSource.isInitialized) {
-			await TestDataSource.initialize();
-		}
-	});
-
-	afterAll(async () => {
-		await TestDataSource.destroy();
-	});
 
 	beforeEach(async () => {
 		await request(app).post("/users/").send({
@@ -206,23 +187,37 @@ describe("PUT /users/:ID", () => {
 			expect(response.body).toEqual({ "message": "User updated successfully", "user": output })
 		})
 	})
-	
+
 	describe("fail cases: ", () => {
 
 		const invalidInput = { "name": "testing..."}
 		const invalidTypesInput = { "name": 12, "email": 12 }
-		const validInput = { "name": "12", "email": "12" }
+		const validInput = { "name": "12", "email": "12@email.com" }
 
 		test("should return status 400 for invalid input", async () => {
 			const response = await request(app).put("/users/1").send(invalidInput)
 			expect(response.status).toBe(400)
-			expect(response.body).toEqual({ "message": "Name and email are required" })
+			expect(response.body).toEqual({ "message": [
+				{
+					"message": "Required",
+					"path": "email",
+				},
+			]})
 		})
 
 		test("should return status 400 for invalid types in input", async () => {
 			const response = await request(app).put("/users/1").send(invalidTypesInput)
 			expect(response.status).toBe(400)
-			expect(response.body).toEqual({"message": "name or email must be string"})
+			expect(response.body).toEqual({"message": [
+				{
+				  "message": "Expected string, received number",
+				  "path": "name",
+				},
+				{
+				  "message": "Expected string, received number",
+				  "path": "email",
+				}
+			]})
 		})
 
 		test("should return status 404 if the user is not found", async () => {
@@ -230,7 +225,7 @@ describe("PUT /users/:ID", () => {
 			expect(response.status).toBe(404)
 			expect(response.body).toEqual({ "message": "User not found" })
 		})
-		
+
 		test.todo("should return status 500 if there is an error when updating the user")
 	})
-});
+})
