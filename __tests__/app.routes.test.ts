@@ -1,17 +1,17 @@
 import request from "supertest";
 import app from "../src/app";
 
-import { ProdutionDataSource } from "../src/app-data-source";
+import { TestDataSource } from "../src/app-data-source";
 
 describe("GET /", () => {
 	beforeAll(async () => {
-		if(!ProdutionDataSource.isInitialized){
-			await ProdutionDataSource.initialize()
+		if(!TestDataSource.isInitialized){
+			await TestDataSource.initialize()
 		}
 	})
 
 	afterAll(async () => {
-		await ProdutionDataSource.destroy()
+		await TestDataSource.destroy()
 	})
 
 	test('should return a message "ok" ', async () => {

@@ -1,12 +1,12 @@
 import { Router } from "express";
 
-import { TestDataSource, ProdutionDataSource } from '../app-data-source';
+import { TestDataSource, DevDataSource } from '../app-data-source';
 import { userControllers } from "../controllers/users.controllers";
 import { setDataSource } from "../middlewares/setdatasource";
 
 const isTest = process.env.NODE_ENV === 'test'
 /* istanbul ignore next */
-const data_source = isTest ? TestDataSource : ProdutionDataSource
+const data_source = isTest ? TestDataSource : DevDataSource
 
 
 const router = Router();
