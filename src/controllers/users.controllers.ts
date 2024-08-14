@@ -28,7 +28,7 @@ export const userControllers = {
 				return response.status(400).json({message: validationError})
 			}
 		}
-		return response.status(500).json({ message: "Internal server error!"})
+		return response.status(500).json({ message: "Internal server error"})
 	},
 
 	get: async (request: Request, response: Response) => {
@@ -69,15 +69,15 @@ export const userControllers = {
 
 			return response.status(200).json({ "message": "User deleted successfully" });
 		} catch (error) {
-			return response.status(500).json({ "message": "Error deleting user", "error": error });
+			return response.status(500).json({ "message": "Error deleting user"});
 		}
 	},
 
 	update: async (request: Request, response: Response) => {
 		const datasource = request.app.locals.datasource as DataSource
-		const userId = parseInt(request.params.id);
 
 		try {
+			const userId = parseInt(request.params.id);
 			const { name, email } = userSchemaInput.parse(request.body);
 
 			const userRepository = datasource.getRepository(User);
@@ -103,6 +103,6 @@ export const userControllers = {
 				return response.status(400).json({message: validationError})
 			}
 		}
-		return response.status(500).json({ message: "Internal server error!"})
+		return response.status(500).json({ message: "Internal server error"})
 	},
 }

@@ -73,7 +73,6 @@ describe("POST /users/", () => {
 				},
 			]})
 		})
-		test.todo("should return status 500 for internal server error")
 	})
 })
 
@@ -161,8 +160,6 @@ describe("DELETE /users/:ID", () => {
 			expect(response.status).toBe(404)
 			expect(response.body).toEqual({ "message": "User not found!" })
 		})
-
-		test.todo("should return status 500 if there is an error when deleting the user")
 	})
 })
 
@@ -225,7 +222,5 @@ describe("PUT /users/:ID", () => {
 			expect(response.status).toBe(404)
 			expect(response.body).toEqual({ "message": "User not found" })
 		})
-
-		test.todo("should return status 500 if there is an error when updating the user")
 	})
 })

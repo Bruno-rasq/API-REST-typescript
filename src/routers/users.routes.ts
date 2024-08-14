@@ -5,7 +5,8 @@ import { userControllers } from "../controllers/users.controllers";
 import { setDataSource } from "../middlewares/setdatasource";
 
 const isTest = process.env.NODE_ENV === 'test'
-const data_source = isTest ? TestDataSource : ProdutionDataSource 
+/* istanbul ignore next */
+const data_source = isTest ? TestDataSource : ProdutionDataSource
 
 
 const router = Router();
