@@ -7,7 +7,7 @@ recursos (como dados de usuarios, produtos e etc...) são  representados por URL
 para criar, atualizar, deletar e ler estes dados são realizados por meios de metodos HTTP 
 como POST, GET, PUT, DELETE e mais...
 
-![example]("./public/assets/example.png")
+![example](./public/assets/example.png)
 
 
 A ideia deste diretorio é desenvolver um CRUD simples porém completinho com todos os metodos
