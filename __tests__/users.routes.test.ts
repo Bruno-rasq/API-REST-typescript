@@ -88,8 +88,22 @@ describe("GET /users/", () => {
 
 		test("should return a empty list of users", async () => {
 			const response = await request(app).get("/users/");
-			expect(response.body).toEqual({"users": []})
+			expect(response.body).toEqual({"users": [], "meta": {
+					"path":"/users/",
+					"page":1,
+					"next":0,
+					"prev":1,
+					"last":0,
+					"total":0
+				}
+			})
 		});
+
+		test("meta data should be next and prev properties", async () => {
+			const response = await request(app).get("/users?page=1");
+			expect(response.body.meta).toHaveProperty("next", 0)
+			expect(response.body.meta).toHaveProperty("prev", 1)
+		})
 	})
 })
 
