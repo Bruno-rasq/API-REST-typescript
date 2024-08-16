@@ -12,6 +12,6 @@ app.use(express.json())
 // adicionando as rotas
 app.use("/", appRouters)
 app.use("/users", UserRouters)
-app.use("/api", swaggerDocs)
+app.use("/docs", swaggerDocs)
 
 export default app;

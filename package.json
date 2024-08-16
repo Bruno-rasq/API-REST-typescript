@@ -4,10 +4,8 @@
   "description": "",
   "main": "./src/server.ts",
   "scripts": {
-    "predev": "clear",
-    "dev": "tsx ./src/server.ts",
-    "pretest": "clear",
-    "test": "NODE_ENV=test jest --verbose --coverage"
+    "dev": "clear && tsx ./src/server.ts",
+    "test": "clear && NODE_ENV=test jest --verbose --coverage"
   },
   "keywords": [
     "express",

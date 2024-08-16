@@ -17,6 +17,7 @@ HTTP, autenticação, testes automatizados, migrações, paginação e mais...
 
 ## Rotas disponiveis:
 
+
 **GET /users/** - metodo usado para recuperar dados do servidor. Ele solicita dados de um recurso 
 especifico e retorna uma resposta contendo os dados.
 
@@ -34,7 +35,7 @@ GET /users?page=1&limit=5
 **OUTPUT**:
 ```json
 { 
-	"users":[
+	"users": [
 		{"name":"test","email":"test@email.com","id":1},
 		{"name":"test","email":"test@email.com","id":2},
 		{"name":"test","email":"test@email.com","id":3},
@@ -63,5 +64,19 @@ GET /users/19
 ```json
 {"name":"test", "email":"test@email.com","id":19}
 ```
+
+## Documentação:
+
+O swagger é uma ferramenta para desenvolver documentação e testes para API REST. A partir
+de uma especificação escrita em YAML ou JSON, o swagger ger uma interface interativa que
+permite visuallizar e testar os endpoints da API diretamente pelo navegador.
+
+```shell
+GET /docs/
+```
+
+**Docs /docs/** - Endpoint que dá acesso a documentação da API gerado pelo swagger.
+
+![api_docs](./public/assets/apidocs.jpg)
 
 //TODO: DOCUMENTAR PROJETO
