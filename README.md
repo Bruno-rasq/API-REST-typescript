@@ -28,20 +28,21 @@ habilitados são:
 - limit: indica a quantidade de dados a serem retornados por pagina, por  padrão 5.
 
 ```shell
-GET /users?page=2&lmit=10
+GET /users?page=1&limit=5
 ```
 
 **OUTPUT**:
 ```json
-{ "users":[
-	{"name":"test","email":"test@email.com","id":1},
-	{"name":"test","email":"test@email.com","id":2},
-	{"name":"test","email":"test@email.com","id":3},
-	{"name":"test","email":"test@email.com","id":4},
-	{"name":"test","email":"test@email.com","id":5}
+{ 
+	"users":[
+		{"name":"test","email":"test@email.com","id":1},
+		{"name":"test","email":"test@email.com","id":2},
+		{"name":"test","email":"test@email.com","id":3},
+		{"name":"test","email":"test@email.com","id":4},
+		{"name":"test","email":"test@email.com","id":5}
 	],
 	"meta": {
-		"path":"/users",
+		"path":"/users?page=1&limit=5",
 		"page":1,
 		"next":2,
 		"prev":1,
