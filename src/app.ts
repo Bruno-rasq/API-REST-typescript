@@ -4,12 +4,16 @@ import { router as UserRouters } from "./routers/users.routes";
 import { router as appRouters } from "./routers/app.routes";
 import { router as swaggerDocs } from './routers/docs.routes'
 
+import { setDataSource } from "./middlewares/setdatasource"
+import { getDataSource } from "./app-data-source"
+
 const app: Application = express()
 
-// Middleware para parsear json
+// set Middlewares
 app.use(express.json())
+app.use(setDataSource(getDataSource()))
 
-// adicionando as rotas
+// set routers
 app.use("/", appRouters)
 app.use("/users", UserRouters)
 app.use("/docs", swaggerDocs)

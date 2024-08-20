@@ -4,7 +4,7 @@ import { z } from "zod"
 
 import { User } from "../entities/users"
 import { userSchemaInput } from "../schemas/user.schemas"
-import { next, prev } from "../utils/utils"
+import { pagination } from "../utils/pagination"
 
 export const userControllers = {
 	
@@ -37,26 +37,17 @@ export const userControllers = {
 		
 		const { page = 1, limit = 5 } = request.query
 		const total = await datasource.getRepository(User).count()
-		const pages = Math.ceil( total / Number(limit))
+		const path = request.originalUrl
 
 		const users = await datasource.getRepository(User).find({
-			order: {
-				id: "ASC"
-			},
+			order: { id: "ASC" },
 			skip: (Number(page) - 1) * Number(limit),
 			take: Number(limit)
 		})
 
-		const pagination = {
-			path: request.originalUrl,
-			page: Number(page),
-			next: next(Number(page),pages),
-			prev: prev(Number(page),pages),
-			last: pages,
-			total
-		}
+		const pag = pagination(path, Number(page), Number(limit), total)
 		
-		return response.status(200).json({ "users": users, "meta": pagination })
+		return response.status(200).json({ "users": users, "meta": pag })
 	},
 
 	getWithID: async (request: Request, response: Response) => {

@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 
+
 export const DevDataSource = new DataSource({
 	type: "sqlite",
 	database: "./src/database/database.sqlite",
@@ -15,3 +16,9 @@ export const TestDataSource = new DataSource({
 	logging: false,
 	synchronize: true,
 });
+
+export const getDataSource = (): DataSource => {
+	const isTest = process.env.NODE_ENV === "test"
+	/* istanbul ignore next */
+	return isTest ? TestDataSource : DevDataSource 
+};

@@ -33,12 +33,12 @@ describe("POST /users/", () => {
 		}
 
 		test("should return a new user if success case", async () => {
-			const response = await request(app).post("/users/").send(validInput)
+			const response = await request(app).post("/users").send(validInput)
 			expect(response.body).toEqual(validIO)
 		})
 
 		test("should return status 201 for success case", async () => {
-			const response = await request(app).post("/users/").send(validInput)
+			const response = await request(app).post("/users").send(validInput)
 			expect(response.status).toBe(201)
 		})
 	})
