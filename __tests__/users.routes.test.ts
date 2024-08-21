@@ -4,7 +4,6 @@ import app from "../src/app";
 import { TestDataSource } from "../src/app-data-source";
 
 
-
 beforeEach(async () => {
 	if (!TestDataSource.isInitialized) {
 		await TestDataSource.initialize();
@@ -14,7 +13,6 @@ beforeEach(async () => {
 afterEach(async () => {
 	await TestDataSource.destroy();
 });
-
 
 
 describe("POST /users/", () => {
